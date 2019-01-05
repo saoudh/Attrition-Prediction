@@ -3,8 +3,8 @@
   */
 package classification
 
-import org.apache.spark.ml.Pipeline
-import org.apache.spark.ml.classification.{DecisionTreeClassificationModel, DecisionTreeClassifier, RandomForestClassifier}
+import org.apache.spark.ml.{Model, Pipeline, PipelineModel}
+import org.apache.spark.ml.classification.{DecisionTreeClassificationModel, DecisionTreeClassifier}
 import org.apache.spark.ml.evaluation.BinaryClassificationEvaluator
 import org.apache.spark.ml.feature.{StringIndexer, VectorAssembler}
 import org.apache.spark.ml.tuning.{CrossValidator, CrossValidatorModel, ParamGridBuilder}
@@ -21,7 +21,7 @@ class Classification extends InitSpark {
   private var testData:Dataset[Employee]=null
 
 
-  def train()={
+  def train():String={
     import sqlContext.implicits._
 
     // define the scheme-structure of the data in the csv-file
@@ -182,14 +182,15 @@ class Classification extends InitSpark {
      crossValidatorModel = crossValidator.fit(trainingData)
 
 
+  "training finished"
   }
 
   def predictTestData(): String ={
-    // get best model after evaluating different tree-depth of the tree-classifier
+    import spark.implicits._
+    // get best model after evaluat ing different tree-depth of the tree-classifier
     val bestModel = crossValidatorModel.bestModel
 
     // stage 9 is the model-processing in the pipeline as a decision tree
-    //
     val treeModel = bestModel.asInstanceOf[org.apache.spark.ml.PipelineModel]
       .stages(9).asInstanceOf[DecisionTreeClassificationModel]
     // println("tree model: " +"\n" + treeModel.toDebugString)
@@ -198,9 +199,6 @@ class Classification extends InitSpark {
 
     /************** evaluate model using test data *************/
     val predictions = crossValidatorModel.transform(testData)
-    println("testdata:")
-    testData.show(10)
-
 
     val accuracy = evaluator.evaluate(predictions)
     println(s"accuracy=$accuracy")
@@ -208,9 +206,8 @@ class Classification extends InitSpark {
     //print label, predictions and probabitlity
     val result = predictions.select("label", "prediction", "probability")
     result.show
-
-    /************** calculate more metrics *************/
-    import spark.implicits._
+    val myseq=result.collectAsList().get(0).toSeq
+    println("myseq="+myseq)
     val labelPredictionDataset = predictions.select("label", "prediction")
     val totalCount = predictions.count()
     val correctPrediction = labelPredictionDataset.filter($"label" === $"prediction").count()
@@ -224,50 +221,41 @@ class Classification extends InitSpark {
           .append("\n")
           .append("Wrong predictions: "+wrongPrediction)
         .append("\n")
-        .append("Acuracy: ",correctPercentage)
+        .append("Acuracy: "+((correctPercentage*100).round/100.toDouble)*100)
         .append("\n")
         .toString()
 
-    println("result.collectAsList():"+labelPredictionDataset.collectAsList())
-    println("result.collectAsList().get(0):"+labelPredictionDataset.collectAsList().get(0))
-    result.show
+
     println("result.type"+labelPredictionDataset.getClass.toString)
     println("result="+labelPredictionDataset)
-
+println("report:"+report)
 
     report
 
 
 }
-  def predictNewData(data:Employee)={
-    val bestModel = crossValidatorModel.bestModel
+  def predictNewData(data:Employee):Seq[Any]={
     import spark.implicits._
+    val bestModel = crossValidatorModel.bestModel
+
+    // cast data set to a dataframe-object to be processed by spark
     val newDataframe=Seq(data).toDS()
-    // stage 9 is the model-processing in the pipeline as a decision tree
-    val treeModel = bestModel.asInstanceOf[org.apache.spark.ml.PipelineModel]
-      .stages(9).asInstanceOf[DecisionTreeClassificationModel]
-    println("Learned classification tree model:\n" + treeModel.toDebugString)
 
+    // predict new data set with the most optimal model
+    val predictions = bestModel.transform(newDataframe)
 
-    println("newdata:")
-    testData.show(10)
-    println("data:")
-    println("data="+data)
-
-    /************** predict with test data *************/
-    val predictions = crossValidatorModel.transform(newDataframe)
-
-    //val accuracy = evaluator.evaluate(predictions)
-   // evaluator.explainParams()
-    //print label, predictions and probabitlity
     val result = predictions.select("prediction", "probability")
-    println("result.collectAsList():"+result.collectAsList())
-    println("result.collectAsList()(0):"+result.collectAsList().get(0))
-    result.show
-    println("result.type"+result.getClass.toString)
-    println("result="+result)
 
+    // return prediction and probability as array with both elements as double type
+    // as there is only one prediction because of a single data set, the first item is selected
+    println("result.collectAsList()"+result.collectAsList())
 
+    println("result.collectAsList().get(0)"+result.collectAsList().get(0))
+    println("result.collectAsList().get(0)"+result.collectAsList().get(0))
+    println("(result.collectAsList().get(0))(0)"+(result.collectAsList().get(0))(0))
+    println("result.collectAsList().get(0).toseq"+result.collectAsList().get(0).toSeq)
+    println("(result.collectAsList().get(0))(0).tostring"+(result.collectAsList().get(0))(0).toString)
+    result.collectAsList().get(0).toSeq
 
 
   }
