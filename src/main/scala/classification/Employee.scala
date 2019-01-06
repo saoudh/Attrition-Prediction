@@ -3,6 +3,7 @@ package classification
 /**
   * Created by Hussam on 05.01.19.
   */
+// structure of the data as a case class
 final case class Employee(age: Int, attrition: String,businessTravel: String,
                           dailyRate: Int, department:String,distanceFromHome:Int,
                           education:Int,educationField:String, employeeCount:Int,

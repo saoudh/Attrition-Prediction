@@ -135,7 +135,7 @@ class Classification extends InitSpark {
       .setInputCols(myFeatures)
       .setOutputCol("features")
 
-    // Split the data into training and test sets (30% held out for testing).
+    // data is split into training and test sets by ration 0.7/0.3
     val Array(trainingData1, testData2) = myData.randomSplit(Array(0.7, 0.3))
     trainingData = trainingData1
     testData = testData2
@@ -176,7 +176,6 @@ class Classification extends InitSpark {
     // fit training data with cross validator and get model
     crossValidatorModel = crossValidator.fit(trainingData)
 
-
     "training finished"
   }
 
@@ -192,7 +191,7 @@ class Classification extends InitSpark {
 
 
     /** ************ evaluate model using test data *************/
-    val predictions = crossValidatorModel.transform(testData)
+    val predictions = bestModel.transform(testData)
 
     val accuracy = evaluator.evaluate(predictions)
     evaluator.explainParams()
@@ -216,11 +215,6 @@ class Classification extends InitSpark {
       .append("\n")
       .toString()
 
-
-    println("result.type" + labelPredictionDataset.getClass.toString)
-    println("result=" + labelPredictionDataset)
-    println("report:" + report)
-
     report
 
 
@@ -236,19 +230,13 @@ class Classification extends InitSpark {
     // predict new data set with the most optimal model
     val predictions = bestModel.transform(newDataframe)
 
+    // get only the prediction of the label and the probability
     val result = predictions.select("prediction", "probability")
 
     // return prediction and probability as array with both elements as double type
     // as there is only one prediction because of a single data set, the first item is selected
-    println("result.collectAsList()" + result.collectAsList())
-
-    println("result.collectAsList().get(0)" + result.collectAsList().get(0))
-    println("result.collectAsList().get(0)" + result.collectAsList().get(0))
-    println("(result.collectAsList().get(0))(0)" + (result.collectAsList().get(0)) (0))
-    println("result.collectAsList().get(0).toseq" + result.collectAsList().get(0).toSeq)
-    println("(result.collectAsList().get(0))(0).tostring" + (result.collectAsList().get(0)) (0).toString)
+    // structure: [label, [probab. that's true, probab. that's false]]
     result.collectAsList().get(0).toSeq
-
 
   }
 

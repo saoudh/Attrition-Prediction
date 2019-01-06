@@ -5,7 +5,7 @@ import org.apache.spark.sql.SparkSession
 
 trait InitSpark {
   val spark: SparkSession = SparkSession.builder()
-                            .appName("Spark example")
+                            .appName("Attrition prediction")
                             .master("local[*]")
                             .config("option", "some-value")
                             .getOrCreate()
