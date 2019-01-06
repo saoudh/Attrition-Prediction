@@ -5,7 +5,7 @@
 ## 1 Introduction 
 
 The project has the aim of predicting the attrition of employees, based on the data set provided by 
-Ahassan Abdelglil1 (https://www.kaggle.com/alhassanabdelglil/classification)
+Ahassan Abdelglil1 ([Data set](https://www.kaggle.com/alhassanabdelglil/classification)).
 
 The data set contains a huge number of features, although not all of them are relevant and needed 
 for the classification process.
@@ -58,14 +58,12 @@ To run the application execute:
 A BinaryClassificationEvaluator and a 5-fold CrossValidator is used for evaluation of the model. To get the 
 model with the best max depth parameter, values from 2 to 7 are used for this parameter. 
 
-The model has an accuracy on unseen data from the test data set of about 85 % (figure 1).
+The model has an accuracy on unseen data from the test data set of about 85 % (figure 1):
 
-
-						    figure 1: Evaluation of the model with test data
+![evaluation of test data](https://github.com/saoudh/Machine-Learning-Attrition-Prediction/blob/master/screenshots/attr-evaluation.png)
 
 The prediction of predefined default values set by triggering the button “set default values” 
 has a probability of the predicted label being true of 79 % (figure 2).
 
+![prediction of default values](https://github.com/saoudh/Machine-Learning-Attrition-Prediction/blob/master/screenshots/attr-prediction.png)
 
-
-	figure 2: prediction of default values
