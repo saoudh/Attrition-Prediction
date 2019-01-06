@@ -5,7 +5,7 @@
 ## 1 Introduction 
 
 The project has the aim of predicting the attrition of employees, based on the data set provided by 
-Ahassan Abdelglil1 [Data Set source](https://www.kaggle.com/alhassanabdelglil/classification)
+Ahassan Abdelglil1 ([Data set](https://www.kaggle.com/alhassanabdelglil/classification)).
 
 The data set contains a huge number of features, although not all of them are relevant and needed 
 for the classification process.
