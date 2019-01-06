@@ -1,7 +1,7 @@
 package classification
 
 /**
-  * Created by admin on 05.01.19.
+  * Created by Hussam on 05.01.19.
   */
 final case class Employee(age: Int, attrition: String,businessTravel: String,
                           dailyRate: Int, department:String,distanceFromHome:Int,

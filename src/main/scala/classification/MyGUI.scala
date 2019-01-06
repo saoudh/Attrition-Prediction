@@ -15,12 +15,9 @@ import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 object MyGUI extends JFXApp {
-  println("version:" + util.Properties.versionString)
   val classification = new Classification()
 
-
   import scalafx.Includes._
-
 
   var btnTrain = new Button {
     text = "train model"
@@ -58,25 +55,16 @@ object MyGUI extends JFXApp {
             }
           })
       }
-
-      println(s"btn-submit called:${status}")
-
-      println("trained model")
-
     }
-
   }
 
 
   val textarea = new TextArea {
-
   }
 
   var btnPredictTestData = new Button {
     text = "predict test data"
-
     import scala.concurrent.ExecutionContext.Implicits.global
-
 
     onAction = (a: ActionEvent) => {
       var status = ""
@@ -108,8 +96,6 @@ object MyGUI extends JFXApp {
             }
           })
       }
-
-
     }
   }
 
@@ -178,10 +164,7 @@ object MyGUI extends JFXApp {
 
   var btnPredictNewData = new Button {
     text = "predict new data"
-
-
   }
-
 
   var btnSetDefaultValues = new Button {
     text = "set default values"
@@ -189,8 +172,6 @@ object MyGUI extends JFXApp {
 
 
   stage = new PrimaryStage {
-
-
     val myFeatures: Array[String] = Array("age (i.e. 31)", "businessTravel",
       "dailyRate (102 - 1499)", "distanceFromHome (1 - 29)",
 
@@ -244,22 +225,15 @@ object MyGUI extends JFXApp {
       children = btnPredictNewData
     }
 
-
     scene = new Scene {
-      title = "Attrition Precition"
-
-
+      title = "Attrition Prediction"
       root = new VBox {
-
         children = myHBoxes
       }
 
       btnSetDefaultValues.onAction = (a: ActionEvent) => {
-        println("setdefaultvalues1")
-
         Platform.runLater(new Runnable {
           override def run(): Unit = {
-            println("setdefaultvalues2")
             setDefaultValues(myBoxes = myBoxes)
           }
         })
@@ -293,12 +267,7 @@ object MyGUI extends JFXApp {
               }
             })
         }
-
-
       }
-
     }
   }
-
-
 }
